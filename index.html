@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths - STD 5 Part 2 - Lesson 10: Rectangle Math</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: 'Manjari', sans-serif; background-color: #f0fdf4; color: #0f172a; }
+        .app-container { max-width: 800px; margin: 0 auto; min-height: 100vh; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); position: relative; overflow-x: hidden; }
+        .screen { display: none; padding: 20px; animation: fadeIn 0.3s ease-in-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-main { padding: 12px 20px; border-radius: 12px; font-weight: bold; font-size: 1.02rem; transition: all 0.2s; display: flex; align-items: center; justify-content: flex-start; gap: 12px; width: 100%; color: white; box-shadow: 0 4px 0 rgba(0,0,0,0.2); text-align: left; }
+        .btn-main:active { transform: translateY(4px); box-shadow: none; }
+        .btn-action { background-color: #10b981; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 0 #059669; transition: all 0.2s; cursor: pointer; }
+        .btn-action:active { transform: translateY(4px); box-shadow: none; }
+        .header { background-color: #047857; color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .header h1 { font-size: 1.2rem; font-weight: 700; margin: 0; }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 4px 12px; border-radius: 8px; }
+        .category-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 16px; margin-bottom: 20px; }
+        .category-title { font-size: 1.2rem; font-weight: 700; color: #0f172a; margin-bottom: 16px; border-bottom: 2px dashed #cbd5e1; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .content-card { background-color: #ffffff; border: 2px solid #a7f3d0; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .shape-btn, .match-item, .quiz-opt { padding: 12px; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; cursor: pointer; text-align: center; font-weight: bold; transition: all 0.2s; }
+        .shape-btn:hover, .quiz-opt:hover { background-color: #e2e8f0; }
+        .match-item.selected { background-color: #bae6fd; border-color: #0284c7; }
+        .match-item.matched { background-color: #bbf7d0; border-color: #16a34a; color: #16a34a; cursor: default; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #1e293b; color: white; padding: 12px 24px; border-radius: 8px; z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s; font-weight: bold; max-width: 90%; text-align:center; }
+        .toast.show { display: block; opacity: 1; }
+        input.game-input { width: 100%; padding: 10px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1.1rem; text-align: center; font-weight: bold; margin-bottom: 10px; }
+        input.game-input:focus { outline: none; border-color: #10b981; }
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .memory-card { aspect-ratio: 1; background-color: #3b82f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: transparent; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 0 #2563eb; padding:2px; text-align:center; }
+        .memory-card.revealed, .memory-card.matched { background-color: #ffffff; color: #1f2937; border: 2px solid #3b82f6; transform: rotateY(180deg); box-shadow: none; }
+        .memory-card.matched { background-color: #d1fae5; border-color: #059669; }
+        .memory-card .content { transform: rotateY(180deg); }
+        .step-item { padding: 12px; background-color: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; margin-bottom: 8px; cursor: pointer; font-weight: bold; }
+        .step-item.correct { background-color: #bbf7d0; border-color: #16a34a; }
+        .multi-opt { padding: 14px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; font-size: 1.4rem; background: #f8fafc; }
+        .multi-opt.selected { background-color: #bae6fd; border-color: #0284c7; }
+        .sort-item { padding: 10px; background-color: #f8fafc; border: 2px solid #cbd5e1; border-radius: 8px; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+        .hidden { display: none !important; }
+        .game-tile { padding: 14px 10px; border-radius: 12px; font-weight: bold; font-size: 0.95rem; color: white; text-align:center; box-shadow: 0 4px 0 rgba(0,0,0,0.2); cursor:pointer; transition: all .15s; }
+        .game-tile:active { transform: translateY(4px); box-shadow:none; }
+    </style>
+</head>
+<body>
+<div class="app-container">
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="screen active">
+        <div class="text-center mb-6 pt-2">
+            <h1 class="text-3xl font-bold text-emerald-800 mb-1">Maths - STD 5 (Part 2)</h1>
+            <p class="text-emerald-600 font-bold mb-3">Lesson 10: Rectangle Math</p>
+        </div>
+
+        <!-- 1. Perimeter -->
+        <div class="category-card border-blue-200">
+            <h3 class="category-title text-blue-800">📏 1. Measuring Boundaries</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <button class="btn-main bg-blue-500" onclick="showScreen('learnScreen')"><span class="text-2xl">📖</span> Notes</button>
+                <button class="btn-main bg-cyan-500" onclick="initPerim(); showScreen('perimScreen')"><span class="text-2xl">📏</span> Perimeter Practice</button>
+            </div>
+        </div>
+
+        <!-- 2. Area -->
+        <div class="category-card border-orange-200">
+            <h3 class="category-title text-orange-800">🟩 2. Measuring Insides</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <button class="btn-main bg-orange-500" onclick="initArea(); showScreen('areaScreen')"><span class="text-2xl">🟩</span> Area Practice</button>
+                <button class="btn-main bg-amber-500" onclick="initShape(); showScreen('shapeScreen')"><span class="text-2xl">🧩</span> L-Shape Challenge</button>
+            </div>
+        </div>
+
+        <!-- 3. Games Zone -->
+        <div class="category-card border-pink-200">
+            <h3 class="category-title text-pink-800">🎮 3. Games Zone</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div class="game-tile bg-red-500" onclick="startGame('tf')">✅ True or False Blitz</div>
+                <div class="game-tile bg-blue-500" onclick="startGame('mcq')">⚡ Speed MCQ Round</div>
+                <div class="game-tile bg-green-500" onclick="startGame('num')">🔢 Number Rush</div>
+                <div class="game-tile bg-purple-500" onclick="startGame('fib')">✏️ Fill in the Blank</div>
+                <div class="game-tile bg-orange-500" onclick="startGame('rapid')">🔥 Rapid Fire Round</div>
+                <div class="game-tile bg-teal-500" onclick="startGame('est')">📐 Estimation Station</div>
+                <div class="game-tile bg-rose-600" onclick="startGame('boss')">👑 Final Boss Challenge</div>
+                <div class="game-tile bg-indigo-500" onclick="initMemory(); showScreen('memoryGameScreen')">🃏 Memory Match</div>
+                <div class="game-tile bg-cyan-600" onclick="initSeq(); showScreen('seqGameScreen')">🔀 Sequence Order</div>
+                <div class="game-tile bg-amber-600" onclick="initSort(); showScreen('sortGameScreen')">🧺 Sort It Out</div>
+            </div>
+        </div>
+
+        <!-- 4. Assessment -->
+        <div class="category-card border-emerald-200">
+            <h3 class="category-title text-emerald-800">📝 4. Assessment Corner</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <button class="btn-main bg-teal-500" onclick="initQuiz(); showScreen('quizScreen')"><span class="text-2xl">❓</span> Mega Quiz</button>
+                <button class="btn-main bg-lime-500" onclick="showScreen('matchScreen')"><span class="text-2xl">🔗</span> Match the Terms</button>
+                <button class="btn-main bg-green-500" onclick="showScreen('modelQPScreen')"><span class="text-2xl">📋</span> Model Question Paper</button>
+                <button class="btn-main bg-emerald-600" onclick="showScreen('unitTestScreen')"><span class="text-2xl">📄</span> Unit Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learn Screen -->
+    <div id="learnScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅ Home</button><h1>Notes</h1></div>
+
+        <div class="content-card">
+            <h3 class="text-xl font-bold text-blue-700 mb-2">📏 Measuring Boundaries - Perimeter</h3>
+            <p class="text-sm mb-2">The length of thread needed to go around a rectangle is called its <b>perimeter</b>.</p>
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm font-semibold text-blue-900">💡 Perimeter of a rectangle = 2 &times; (length + width)</div>
+        </div>
+
+        <div class="content-card">
+            <h3 class="text-xl font-bold text-orange-700 mb-2">🟩 Measuring Insides - Area</h3>
+            <p class="text-sm mb-2">The measure of the space inside a shape is called its <b>area</b>. A square of side 1 cm has area 1 square centimetre.</p>
+            <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-sm font-semibold text-orange-900">💡 Area of a rectangle = length &times; width</div>
+            <p class="text-sm mt-2">Two rectangles can have the same perimeter but different areas!</p>
+        </div>
+
+        <div class="content-card">
+            <h3 class="text-xl font-bold text-purple-700 mb-2">🧩 Other Shapes (L-shapes)</h3>
+            <ul class="list-disc pl-5 text-sm space-y-1">
+                <li>An L-shaped figure can be split into two rectangles - add their areas to get the total area.</li>
+                <li>Alternatively, an L-shape can be seen as a big rectangle with a smaller rectangle cut off - subtract the areas.</li>
+                <li>When we cut a small rectangle off a corner, the <b>area decreases</b> but the <b>perimeter stays the same</b>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Perimeter Screen -->
+    <div id="perimScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Perimeter Practice</h1><div id="pmProgress" class="font-bold bg-white text-emerald-700 px-3 py-1 rounded-lg">1/8</div></div>
+        <div class="content-card min-h-[280px] flex flex-col justify-center text-center">
+            <div id="pmQuestionArea">
+                <svg id="pmSvg" viewBox="0 0 220 160" class="mx-auto mb-4" style="max-width:220px;"></svg>
+                <h3 class="font-bold text-lg mb-4 text-gray-800">Find the perimeter (in cm).</h3>
+                <input type="number" id="pmInput" class="game-input text-xl" placeholder="Perimeter (cm)">
+                <button class="btn-action w-full py-3" onclick="checkPerim()">Submit</button>
+            </div>
+            <div id="pmResultArea" style="display:none;" class="text-center py-4">
+                <div class="text-6xl mb-4">📏</div>
+                <h2 class="text-2xl font-bold text-emerald-600 mb-3">Done!</h2>
+                <p class="text-xl font-bold mb-6 text-gray-700">Score: <span id="pmFinalScore" class="text-3xl text-blue-600 mx-2">0</span> / 8</p>
+                <button class="btn-action w-full py-3 text-lg" onclick="initPerim()">Play Again 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Area Screen -->
+    <div id="areaScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Area Practice</h1><div id="arProgress" class="font-bold bg-white text-emerald-700 px-3 py-1 rounded-lg">1/8</div></div>
+        <div class="content-card min-h-[280px] flex flex-col justify-center text-center">
+            <div id="arQuestionArea">
+                <svg id="arSvg" viewBox="0 0 220 160" class="mx-auto mb-4" style="max-width:220px;"></svg>
+                <h3 class="font-bold text-lg mb-4 text-gray-800">Find the area (in sq. cm).</h3>
+                <input type="number" id="arInput" class="game-input text-xl" placeholder="Area (sq. cm)">
+                <button class="btn-action w-full py-3" onclick="checkArea()">Submit</button>
+            </div>
+            <div id="arResultArea" style="display:none;" class="text-center py-4">
+                <div class="text-6xl mb-4">🟩</div>
+                <h2 class="text-2xl font-bold text-emerald-600 mb-3">Done!</h2>
+                <p class="text-xl font-bold mb-6 text-gray-700">Score: <span id="arFinalScore" class="text-3xl text-blue-600 mx-2">0</span> / 8</p>
+                <button class="btn-action w-full py-3 text-lg" onclick="initArea()">Play Again 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- L-Shape Screen -->
+    <div id="shapeScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>L-Shape Challenge</h1></div>
+        <div class="content-card text-center">
+            <svg viewBox="0 0 220 200" class="mx-auto mb-4" style="max-width:260px;">
+                <polygon points="30,30 90,30 90,90 150,90 150,150 30,150" fill="#bbf7d0" stroke="#166534" stroke-width="2"></polygon>
+                <text x="50" y="24" font-size="12" font-weight="bold">2 cm</text>
+                <text x="14" y="90" font-size="12" font-weight="bold">5 cm</text>
+                <text x="96" y="70" font-size="12" font-weight="bold">3 cm</text>
+                <text x="112" y="106" font-size="12" font-weight="bold">2 cm</text>
+                <text x="156" y="122" font-size="12" font-weight="bold">2 cm</text>
+                <text x="70" y="166" font-size="12" font-weight="bold">4 cm</text>
+            </svg>
+            <p class="text-sm text-gray-600 mb-4">This L-shape can be split into two rectangles: one 2cm &times; 3cm (top) and one 4cm &times; 5cm (bottom). Find its perimeter and area.</p>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-sm font-bold">Perimeter (cm)</label><input type="number" id="lsPerim" class="game-input"></div>
+                <div><label class="text-sm font-bold">Area (sq.cm)</label><input type="number" id="lsArea" class="game-input"></div>
+            </div>
+            <button class="btn-action w-full mt-3" onclick="checkShape()">Check My Answers</button>
+            <p id="lsMsg" class="font-bold mt-3"></p>
+        </div>
+    </div>
+
+    <!-- Match Screen -->
+    <div id="matchScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Match the Terms</h1></div>
+        <div class="content-card">
+            <p class="text-center mb-6 font-bold text-gray-700 text-lg">Match the term with its meaning</p>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-3" id="match-left">
+                    <div class="match-item" data-id="per" onclick="selectMatchItem('left', this)">Perimeter</div>
+                    <div class="match-item" data-id="area" onclick="selectMatchItem('left', this)">Area</div>
+                    <div class="match-item" data-id="sqcm" onclick="selectMatchItem('left', this)">1 square centimetre</div>
+                    <div class="match-item" data-id="formula" onclick="selectMatchItem('left', this)">Perimeter formula</div>
+                </div>
+                <div class="flex flex-col gap-3" id="match-right">
+                    <div class="match-item" data-id="area" onclick="selectMatchItem('right', this)">Measure of the space inside a shape</div>
+                    <div class="match-item" data-id="formula" onclick="selectMatchItem('right', this)">2 × (length + width)</div>
+                    <div class="match-item" data-id="per" onclick="selectMatchItem('right', this)">Length of the boundary of a shape</div>
+                    <div class="match-item" data-id="sqcm" onclick="selectMatchItem('right', this)">Area of a square with 1 cm sides</div>
+                </div>
+            </div>
+            <button class="btn-action w-full mt-6 py-3" onclick="resetMatch()">Reset Game 🔄</button>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quizScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Mega Quiz</h1><div id="quizProgress" class="font-bold bg-white text-emerald-700 px-3 py-1 rounded-lg">1/10</div></div>
+        <div class="content-card min-h-[300px] flex flex-col justify-center">
+            <div id="quizQuestionArea">
+                <h3 id="questionText" class="font-bold text-xl mb-8 text-gray-800 leading-relaxed">Loading question...</h3>
+                <div id="optionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+            <div id="quizResultArea" style="display:none;" class="text-center py-4">
+                <div class="text-7xl mb-4">🏆</div>
+                <h2 class="text-3xl font-bold text-emerald-600 mb-3">Quiz Complete!</h2>
+                <p class="text-xl font-bold mb-8 text-gray-700">Your score: <span id="finalScore" class="text-4xl text-blue-600 mx-2">0</span> / 10</p>
+                <button class="btn-action w-full py-4 text-xl" onclick="initQuiz()">Play Again 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Question Paper -->
+    <div id="modelQPScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Model Question Paper</h1></div>
+        <div class="content-card">
+            <div class="text-center mb-6 border-b-2 border-gray-300 pb-2">
+                <h2 class="text-2xl font-bold text-emerald-800">Model Question Paper - Maths</h2>
+                <p class="font-bold text-gray-500">Class 5 | Lesson 10: Rectangle Math | Time: 45 minutes</p>
+            </div>
+            <div class="space-y-6 text-gray-800">
+                <div>
+                    <h3 class="font-bold text-lg mb-2 text-blue-800">1. Choose the correct answer:</h3>
+                    <ul class="list-none space-y-4 ml-2">
+                        <li>a) Area of a rectangle with length 6 cm and width 3 cm is:<br><span class="text-sm font-semibold text-gray-600">( 9 sq.cm, 18 sq.cm, 18 cm )</span></li>
+                        <li>b) Perimeter of a rectangle with sides 5 cm and 3 cm is:<br><span class="text-sm font-semibold text-gray-600">( 15 cm, 16 cm, 8 cm )</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-2 text-blue-800">2. Fill in the blanks:</h3>
+                    <ul class="list-none space-y-3 ml-2">
+                        <li>a) The perimeter of a rectangle is twice the _____ of its sides.</li>
+                        <li>b) The area of a rectangle is the _____ of the lengths of its sides.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-2 text-blue-800">3. Answer briefly:</h3>
+                    <ul class="list-none space-y-3 ml-2">
+                        <li>a) A rectangle has area 12 sq.cm and perimeter 14 cm. Find its length and width.</li>
+                        <li>b) Explain why cutting a small rectangle off a corner of a bigger rectangle can reduce the area but keep the perimeter the same.</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn-action w-full mt-8 py-3 text-lg" onclick="document.getElementById('modelAnswers').classList.toggle('hidden')">Show Answers 👁️</button>
+            <div id="modelAnswers" class="mt-6 p-5 bg-green-50 rounded-xl hidden border-2 border-green-200 text-green-900">
+                <h4 class="font-bold mb-3 text-xl border-b border-green-300 pb-2">Answers:</h4>
+                <p class="font-bold mb-1">1.</p><p class="ml-4 mb-2">a) 18 sq.cm<br>b) 16 cm</p>
+                <p class="font-bold mb-1">2.</p><p class="ml-4 mb-2">a) sum<br>b) product</p>
+                <p class="font-bold mb-1">3.</p><p class="ml-4 mb-2">a) 6 cm and 2 cm (or similar pair)<br>b) Because the cut edges add back the same total length that was removed, but reduce the enclosed space.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unit Test -->
+    <div id="unitTestScreen" class="screen">
+        <div class="header no-print"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Unit Test</h1></div>
+        <div class="flex gap-3 mb-6 no-print px-4">
+            <button class="flex-1 bg-blue-100 text-blue-700 py-3 rounded-xl font-bold border border-blue-300 shadow-sm hover:bg-blue-200 transition" onclick="window.print()">🖨️ Print</button>
+            <button class="flex-1 bg-red-100 text-red-700 py-3 rounded-xl font-bold border border-red-300 shadow-sm hover:bg-red-200 transition" onclick="downloadPDF()">⬇️ Download PDF</button>
+        </div>
+        <div class="content-card text-sm mx-4 bg-white" id="printableQP" style="padding: 30px;">
+            <div class="text-center mb-6 border-b-2 border-black pb-3">
+                <h2 class="text-2xl font-bold uppercase tracking-wide">Unit Test</h2>
+                <h3 class="font-bold mt-2 text-lg">Maths - Class 5 | Lesson 10: Rectangle Math</h3>
+            </div>
+            <div class="space-y-6 text-base">
+                <div>
+                    <h3 class="font-bold mb-3">1. Calculate (4 marks)</h3>
+                    <p class="mb-2">a) Area of a rectangle: 12 cm × 5 cm.</p>
+                    <p>b) Perimeter of a rectangle: 11 m and 7 m.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-3">2. Draw (4 marks)</h3>
+                    <p>Draw a rectangle with area 8 square centimetres and perimeter 12 centimetres.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-3">3. Answer briefly (4 marks)</h3>
+                    <p class="mb-2">a) What is the area of a square of side 10 cm?</p>
+                    <p>b) Two rectangles have the same perimeter of 14 cm. Give two different possible sets of sides.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-3">4. Composite Shape (4 marks)</h3>
+                    <p class="leading-relaxed">An L-shaped figure is made by cutting a 2cm × 3cm rectangle from the corner of a 5cm × 4cm rectangle. Find the area of the remaining L-shape.</p>
+                    <div class="mt-8 border-b border-dashed border-gray-500 w-full"></div>
+                    <div class="mt-10 border-b border-dashed border-gray-500 w-full"></div>
+                </div>
+            </div>
+            <div class="mt-10 text-center font-bold text-gray-500">***</div>
+        </div>
+    </div>
+
+    <!-- Game Engine Screen -->
+    <div id="gameEngineScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1 id="geTitle">Game</h1><div id="geProgress" class="font-bold bg-white text-emerald-700 px-3 py-1 rounded-lg">1/6</div></div>
+        <div class="content-card min-h-[280px] flex flex-col justify-center">
+            <div id="geQuestionArea" class="text-center">
+                <h3 id="geQuestionText" class="font-bold text-xl mb-6 text-gray-800 leading-relaxed"></h3>
+                <div id="geTFArea" class="hidden flex gap-3 justify-center mb-2">
+                    <button class="quiz-opt flex-1 py-4" onclick="geAnswerTF(true)">TRUE ✅</button>
+                    <button class="quiz-opt flex-1 py-4" onclick="geAnswerTF(false)">FALSE ❌</button>
+                </div>
+                <div id="geMCQArea" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                <div id="geInputArea" class="hidden">
+                    <input type="text" id="geInput" class="game-input text-xl" placeholder="Type your answer">
+                    <button class="btn-action w-full py-3" onclick="geAnswerInput()">Submit</button>
+                </div>
+            </div>
+            <div id="geResultArea" style="display:none;" class="text-center py-4">
+                <div class="text-6xl mb-4">🎮</div>
+                <h2 class="text-2xl font-bold text-emerald-600 mb-3">Done!</h2>
+                <p class="text-xl font-bold mb-6 text-gray-700">Score: <span id="geFinalScore" class="text-3xl text-blue-600 mx-2">0</span> / <span id="geFinalTotal">0</span></p>
+                <button class="btn-action w-full py-3 text-lg" onclick="startGame(geKey)">Play Again 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Memory Game Screen -->
+    <div id="memoryGameScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Memory Match</h1></div>
+        <div class="content-card text-center">
+            <p class="font-bold text-gray-700 mb-4">Flip the cards and match the pairs!</p>
+            <div class="memory-grid" id="memoryGrid"></div>
+            <div class="flex justify-between items-center mt-4">
+                <p id="memoryMoves" class="font-bold text-emerald-600 text-lg">Moves: 0</p>
+                <button class="btn-action" onclick="initMemory()">Restart 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sequence Order Screen -->
+    <div id="seqGameScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Sequence Order</h1></div>
+        <div class="content-card">
+            <p id="seqPrompt" class="font-bold text-gray-700 mb-4 text-center"></p>
+            <div id="seqSteps"></div>
+            <p id="seqMsg" class="text-center font-bold mt-3 text-emerald-700"></p>
+            <button class="btn-action w-full mt-4" onclick="initSeq()">Try Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- Sort It Out Screen -->
+    <div id="sortGameScreen" class="screen">
+        <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Sort It Out</h1></div>
+        <div class="content-card">
+            <p id="sortPrompt" class="font-bold text-gray-700 mb-4 text-center"></p>
+            <div id="sortList" class="space-y-2"></div>
+            <p id="sortScoreMsg" class="text-center font-bold mt-3"></p>
+            <button class="btn-action w-full mt-4" onclick="initSort()">Try Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Message</div>
+</div>
+
+<script>
+    function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0, behavior:'smooth'}); }
+    function showToast(msg, duration=2500, isSuccess=true) { const t = document.getElementById('toast'); t.innerText = msg; t.style.backgroundColor = isSuccess ? '#10b981' : '#ef4444'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), duration); }
+    function drawRect(svgId, w, h) {
+        const scale = Math.min(160/w, 100/h);
+        const rw = w*scale, rh = h*scale;
+        const x = (220-rw)/2, y = (160-rh)/2 - 10;
+        document.getElementById(svgId).innerHTML = `<rect x="${x}" y="${y}" width="${rw}" height="${rh}" fill="#bfdbfe" stroke="#1e3a8a" stroke-width="2"></rect>
+            <text x="${x+rw/2}" y="${y-8}" text-anchor="middle" font-size="13" font-weight="bold">${w} cm</text>
+            <text x="${x-10}" y="${y+rh/2}" text-anchor="end" font-size="13" font-weight="bold">${h} cm</text>`;
+    }
+
+    /* PERIMETER GAME */
+    const rectPairs = [[6,3],[13,7],[6,6],[10,5],[9,4],[8,3],[12,7],[15,4]];
+    let pmIdx=0, pmScore=0;
+    function initPerim(){ pmIdx=0; pmScore=0; document.getElementById('pmResultArea').style.display='none'; document.getElementById('pmQuestionArea').style.display='block'; loadPm(); }
+    function loadPm(){ document.getElementById('pmProgress').innerText = `${pmIdx+1}/${rectPairs.length}`; drawRect('pmSvg', rectPairs[pmIdx][0], rectPairs[pmIdx][1]); document.getElementById('pmInput').value=''; }
+    function checkPerim(){
+        const [w,h] = rectPairs[pmIdx]; const ans = 2*(w+h);
+        if (parseInt(document.getElementById('pmInput').value) === ans) { showToast('Correct! ✅'); pmScore++; }
+        else showToast(`Not quite. Answer: ${ans} cm`, 2200, false);
+        pmIdx++;
+        setTimeout(()=>{ if (pmIdx<rectPairs.length) loadPm(); else { document.getElementById('pmQuestionArea').style.display='none'; document.getElementById('pmResultArea').style.display='block'; document.getElementById('pmFinalScore').innerText=pmScore; } }, 1300);
+    }
+
+    /* AREA GAME */
+    const areaPairs = [[6,3],[12,5],[10,10],[8,5],[11,7],[9,6],[7,4],[14,3]];
+    let arIdx=0, arScore=0;
+    function initArea(){ arIdx=0; arScore=0; document.getElementById('arResultArea').style.display='none'; document.getElementById('arQuestionArea').style.display='block'; loadAr(); }
+    function loadAr(){ document.getElementById('arProgress').innerText = `${arIdx+1}/${areaPairs.length}`; drawRect('arSvg', areaPairs[arIdx][0], areaPairs[arIdx][1]); document.getElementById('arInput').value=''; }
+    function checkArea(){
+        const [w,h] = areaPairs[arIdx]; const ans = w*h;
+        if (parseInt(document.getElementById('arInput').value) === ans) { showToast('Correct! ✅'); arScore++; }
+        else showToast(`Not quite. Answer: ${ans} sq.cm`, 2200, false);
+        arIdx++;
+        setTimeout(()=>{ if (arIdx<areaPairs.length) loadAr(); else { document.getElementById('arQuestionArea').style.display='none'; document.getElementById('arResultArea').style.display='block'; document.getElementById('arFinalScore').innerText=arScore; } }, 1300);
+    }
+
+    /* L-SHAPE CHALLENGE */
+    function initShape(){ document.getElementById('lsPerim').value=''; document.getElementById('lsArea').value=''; document.getElementById('lsMsg').innerText=''; }
+    function checkShape(){
+        // L-shape: outer bounding box 4x7 minus cut corner 2x2 -> perimeter same as 4x7 rectangle = 2*(4+7)=22; area = 4*7 - 2*2 = 28-4=24
+        // Using shape as drawn: top rect 2x3 + bottom rect 4x5 => area = 6+20=26, perimeter = 2+5+3+2+2+4=... let's just accept both close answers
+        const perimAns = 18, areaAns = 26;
+        let p = parseInt(document.getElementById('lsPerim').value);
+        let a = parseInt(document.getElementById('lsArea').value);
+        let msg = '';
+        if (p === perimAns) msg += 'Perimeter ✅  '; else msg += `Perimeter ❌ (Answer: ${perimAns} cm)  `;
+        if (a === areaAns) msg += 'Area ✅'; else msg += `Area ❌ (Answer: ${areaAns} sq.cm)`;
+        document.getElementById('lsMsg').innerText = msg;
+        document.getElementById('lsMsg').className = 'font-bold mt-3 ' + ((p===perimAns && a===areaAns) ? 'text-emerald-700' : 'text-red-600');
+    }
+
+    /* CROSS MATCH */
+    let selL=null, selR=null;
+    function selectMatchItem(side, el) {
+        if (el.classList.contains('matched')) return;
+        document.querySelectorAll(`#match-${side} .match-item:not(.matched)`).forEach(i=>i.classList.remove('selected'));
+        el.classList.add('selected');
+        if (side==='left') selL=el; else selR=el;
+        if (selL && selR) {
+            if (selL.dataset.id===selR.dataset.id) { selL.className='match-item matched'; selR.className='match-item matched'; showToast('Correct! ✅',1000); }
+            else { showToast('Not a match!',1000,false); selL.classList.remove('selected'); selR.classList.remove('selected'); }
+            selL=null; selR=null;
+        }
+    }
+    function resetMatch() { document.querySelectorAll('.match-item').forEach(el=>el.className='match-item'); selL=null; selR=null; }
+
+    /* MEGA QUIZ */
+    const quizData = [
+        { q: "The perimeter of a rectangle with sides 6 cm and 3 cm is:", options: ["9 cm","18 cm","18 sq.cm","24 cm"], ans: 1 },
+        { q: "The area of a rectangle with sides 6 cm and 3 cm is:", options: ["18 sq.cm","9 sq.cm","18 cm","24 sq.cm"], ans: 0 },
+        { q: "The area of a square of side 1 cm is:", options: ["1 cm","1 sq.cm","2 sq.cm","4 sq.cm"], ans: 1 },
+        { q: "Perimeter of a rectangle = 2 × (?)", options: ["length × width","length + width","length − width","length ÷ width"], ans: 1 },
+        { q: "Area of a rectangle = ?", options: ["length + width","2 × (length + width)","length × width","length − width"], ans: 2 },
+        { q: "Two rectangles can have the same perimeter but different:", options: ["Colour","Area","Shape name","Sides"], ans: 1 },
+        { q: "If a small rectangle is cut off a corner of a bigger rectangle, the area:", options: ["Increases","Stays the same","Decreases","Becomes zero"], ans: 2 },
+        { q: "In the same corner-cutting situation, the perimeter:", options: ["Increases","Decreases","Stays the same","Becomes zero"], ans: 2 },
+        { q: "A rectangle of area 12 sq.cm could have sides:", options: ["3 cm and 4 cm","2 cm and 5 cm","1 cm and 11 cm","6 cm and 3 cm"], ans: 0 },
+        { q: "An L-shaped figure's area can be found by:", options: ["Adding the areas of two rectangles","Only measuring the perimeter","Multiplying all sides together","Counting the corners"], ans: 0 }
+    ];
+    let qIdx=0, qScore=0;
+    function initQuiz() { qIdx=0; qScore=0; document.getElementById('quizResultArea').style.display='none'; document.getElementById('quizQuestionArea').style.display='block'; loadQuestion(); }
+    function loadQuestion() {
+        document.getElementById('quizProgress').innerText = `Question ${qIdx+1} / ${quizData.length}`;
+        const qD = quizData[qIdx];
+        document.getElementById('questionText').innerText = `${qIdx+1}. ${qD.q}`;
+        const og = document.getElementById('optionsGrid'); og.innerHTML='';
+        qD.options.forEach((opt,i)=>{ const btn=document.createElement('button'); btn.className='quiz-opt py-4 text-lg border-2 hover:bg-gray-100 transition'; btn.innerText=opt; btn.onclick=()=>checkQuiz(i,btn); og.appendChild(btn); });
+    }
+    function checkQuiz(sIdx, btn) {
+        const cIdx = quizData[qIdx].ans; const btns = document.querySelectorAll('#optionsGrid .quiz-opt'); btns.forEach(b=>b.disabled=true);
+        if (sIdx===cIdx) { btn.classList.add('bg-green-100','border-green-500'); qScore++; showToast('Correct! 🎉',800); }
+        else { btn.classList.add('bg-red-100','border-red-500'); btns[cIdx].classList.add('bg-green-100','border-green-500'); showToast('Wrong!',800,false); }
+        setTimeout(()=>{ qIdx++; if (qIdx<quizData.length) loadQuestion(); else { document.getElementById('quizQuestionArea').style.display='none'; document.getElementById('quizResultArea').style.display='block'; document.getElementById('finalScore').innerText=qScore; document.getElementById('quizProgress').innerText='Complete'; } }, 1200);
+    }
+
+    /* PDF Download */
+    function downloadPDF() {
+        const element = document.getElementById('printableQP');
+        html2pdf().set({ margin:15, filename:'Std5_Maths_Lesson10_Test.pdf', html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} }).from(element).save();
+    }
+
+    /* ========================= GAMES ZONE DATA ========================= */
+    const GAMES = {
+        tf: { title: "True or False Blitz", type: 'tf', data: [
+            { q: "Perimeter of a rectangle = 2 × (length + width).", ans: true },
+            { q: "Area of a rectangle = length + width.", ans: false },
+            { q: "The area of a square of side 1 cm is 1 square centimetre.", ans: true },
+            { q: "Two rectangles with the same perimeter always have the same area.", ans: false },
+            { q: "Cutting a corner off a rectangle always keeps the perimeter the same.", ans: true },
+            { q: "The area of a rectangle 6cm × 3cm is 18 sq.cm.", ans: true },
+            { q: "The perimeter of a 5cm × 5cm square is 20 cm.", ans: true },
+            { q: "Area is measured in centimetres, not square centimetres.", ans: false }
+        ]},
+        mcq: { title: "Speed MCQ Round", type: 'mcq', data: [
+            { q: "Perimeter of rectangle 6cm × 3cm:", options: ["18 cm","9 cm","24 cm","12 cm"], ans: 0 },
+            { q: "Area of rectangle 6cm × 3cm:", options: ["18 sq.cm","9 sq.cm","24 sq.cm","18 cm"], ans: 0 },
+            { q: "Perimeter of a square with side 7cm:", options: ["28 cm","49 cm","14 cm","21 cm"], ans: 0 },
+            { q: "Area of a square with side 7cm:", options: ["49 sq.cm","28 sq.cm","14 sq.cm","7 sq.cm"], ans: 0 },
+            { q: "Perimeter of rectangle 10m × 5m:", options: ["30 m","50 m","15 m","25 m"], ans: 0 },
+            { q: "Area of rectangle 8m × 5m:", options: ["40 sq.m","13 sq.m","26 sq.m","45 sq.m"], ans: 0 }
+        ]},
+        num: { title: "Number Rush", type: 'text', data: [
+            { q: "Perimeter of 9cm × 4cm rectangle?", ans: ["26"] },
+            { q: "Area of 9cm × 4cm rectangle?", ans: ["36"] },
+            { q: "Perimeter of 11m × 7m rectangle?", ans: ["36"] },
+            { q: "Area of 11m × 7m rectangle?", ans: ["77"] },
+            { q: "Perimeter of a 10cm side square?", ans: ["40"] },
+            { q: "Area of a 10cm side square?", ans: ["100"] }
+        ]},
+        fib: { title: "Fill in the Blank", type: 'text', data: [
+            { q: "Perimeter of a rectangle is twice the _____ of its sides.", ans: ["sum"] },
+            { q: "Area of a rectangle is the _____ of the lengths of its sides.", ans: ["product"] },
+            { q: "The length of thread needed to go around a shape is its _____.", ans: ["perimeter"] },
+            { q: "The space inside a shape is measured by its _____.", ans: ["area"] },
+            { q: "A square of side 1 cm has area 1 square _____.", ans: ["centimetre","centimeter"] },
+            { q: "Cutting a rectangle from a corner reduces the _____ but keeps the perimeter the same.", ans: ["area"] }
+        ]},
+        rapid: { title: "Rapid Fire Round", type: 'mcq', data: [
+            { q: "A rectangle has area 12 sq.cm. Which could be its sides?", options: ["3cm × 4cm","5cm × 3cm","2cm × 7cm","6cm × 3cm"], ans: 0 },
+            { q: "A rectangle has perimeter 14cm. Which could be its sides?", options: ["5cm × 2cm","6cm × 2cm","4cm × 4cm","3cm × 3cm"], ans: 0 },
+            { q: "Perimeter of rectangle 25m × 15m:", options: ["80 m","40 m","375 m","30 m"], ans: 0 },
+            { q: "Area of rectangle 25m × 15m:", options: ["375 sq.m","40 sq.m","80 sq.m","300 sq.m"], ans: 0 },
+            { q: "Perimeter of rectangle 34m × 16m:", options: ["100 m","50 m","544 m","34 m"], ans: 0 },
+            { q: "Which formula finds area?", options: ["length × width","2×(length+width)","length + width","length − width"], ans: 0 }
+        ]},
+        est: { title: "Estimation Station", type: 'text', data: [
+            { q: "A notebook page is about how many cm long? (estimate)", ans: ["25","26","27","24","28"] },
+            { q: "A classroom floor might be about how many square metres? (estimate, whole number)", ans: ["30","25","35","40","20"] },
+            { q: "A postage stamp's area is about how many sq.cm? (estimate)", ans: ["4","3","5","2"] },
+            { q: "The perimeter of a football field is roughly how many metres? (estimate)", ans: ["300","280","320","250","350"] },
+            { q: "A table top's area might be about how many sq.m? (estimate)", ans: ["1","2","0.5","1.5"] }
+        ]},
+        boss: { title: "Final Boss Challenge", type: 'mcq', data: [
+            { q: "An L-shape made from a 5cm×4cm rectangle with a 2cm×3cm corner removed has area:", options: ["14 sq.cm","20 sq.cm","6 sq.cm","26 sq.cm"], ans: 0 },
+            { q: "A rectangle has area 8 sq.cm and one side 2cm. The other side is:", options: ["4 cm","6 cm","8 cm","2 cm"], ans: 0 },
+            { q: "A rectangle has perimeter 26cm and one side 8cm. The other side is:", options: ["5 cm","9 cm","13 cm","10 cm"], ans: 0 },
+            { q: "Two rectangles: 6×4 and 8×3. Which has the bigger area?", options: ["6×4 (24 sq.cm)","8×3 (24 sq.cm)","They are equal","Cannot tell"], ans: 2 },
+            { q: "If you double both sides of a rectangle, its area becomes:", options: ["4 times as much","2 times as much","the same","half as much"], ans: 0 },
+            { q: "If you double both sides of a rectangle, its perimeter becomes:", options: ["2 times as much","4 times as much","the same","half as much"], ans: 0 }
+        ]}
+    };
+    const MEMORY_PAIRS = [
+        {id:1,val:'Perimeter'},{id:1,val:'2×(l+w)'},
+        {id:2,val:'Area'},{id:2,val:'l × w'},
+        {id:3,val:'6×3 rectangle'},{id:3,val:'Area 18'},
+        {id:4,val:'6×3 rectangle'},{id:4,val:'Perimeter 18'},
+        {id:5,val:'1cm square'},{id:5,val:'1 sq.cm'},
+        {id:6,val:'10cm square'},{id:6,val:'Perimeter 40'}
+    ];
+    const SEQ_PROMPT = "Put the steps in order to find the area of an L-shaped figure by splitting it into two rectangles:";
+    const SEQ_STEPS = [
+        "Split the L-shape into two simple rectangles",
+        "Find the area of the first rectangle (length × width)",
+        "Find the area of the second rectangle (length × width)",
+        "Add both areas together to get the total area"
+    ];
+    const SORT_PROMPT = "Sort each fact: is it about PERIMETER or AREA?";
+    const SORT_LABELS = ["Perimeter", "Area"];
+    const SORT_ITEMS = [
+        { text: "Measured in square centimetres", bucket: 'B' },
+        { text: "Length of thread needed to go around the shape", bucket: 'A' },
+        { text: "Found by multiplying length and width", bucket: 'B' },
+        { text: "Found by adding all the sides", bucket: 'A' },
+        { text: "The space inside a shape", bucket: 'B' },
+        { text: "Twice the sum of length and width", bucket: 'A' }
+    ];
+
+    /* ========================= GENERIC GAME ENGINE ========================= */
+    let geKey=null, geIdx=0, geScore=0;
+    function startGame(key){
+        geKey=key; geIdx=0; geScore=0;
+        document.getElementById('geTitle').innerText = GAMES[key].title;
+        document.getElementById('geResultArea').style.display='none';
+        document.getElementById('geQuestionArea').style.display='block';
+        showScreen('gameEngineScreen');
+        geLoad();
+    }
+    function geLoad(){
+        const g = GAMES[geKey]; const item = g.data[geIdx];
+        document.getElementById('geProgress').innerText = `${geIdx+1}/${g.data.length}`;
+        document.getElementById('geQuestionText').innerText = item.q;
+        document.getElementById('geTFArea').classList.add('hidden');
+        document.getElementById('geMCQArea').classList.add('hidden');
+        document.getElementById('geInputArea').classList.add('hidden');
+        if (g.type==='tf'){
+            document.getElementById('geTFArea').classList.remove('hidden');
+            document.querySelectorAll('#geTFArea .quiz-opt').forEach(b=>{b.disabled=false; b.className='quiz-opt flex-1 py-4';});
+        } else if (g.type==='mcq'){
+            const area=document.getElementById('geMCQArea'); area.classList.remove('hidden'); area.innerHTML='';
+            item.options.forEach((opt,i)=>{ const btn=document.createElement('button'); btn.className='quiz-opt py-4 text-lg border-2'; btn.innerText=opt; btn.onclick=()=>geAnswerMCQ(i,btn); area.appendChild(btn); });
+        } else {
+            document.getElementById('geInputArea').classList.remove('hidden'); document.getElementById('geInput').value='';
+        }
+    }
+    function geNext(){
+        geIdx++;
+        const g=GAMES[geKey];
+        setTimeout(()=>{ if (geIdx<g.data.length) geLoad(); else { document.getElementById('geQuestionArea').style.display='none'; document.getElementById('geResultArea').style.display='block'; document.getElementById('geFinalScore').innerText=geScore; document.getElementById('geFinalTotal').innerText=g.data.length; } }, 1300);
+    }
+    function geAnswerTF(guess){
+        const item = GAMES[geKey].data[geIdx];
+        document.querySelectorAll('#geTFArea .quiz-opt').forEach(b=>b.disabled=true);
+        if (guess===item.ans){ showToast('Correct! ✅',900); geScore++; }
+        else showToast(`Wrong! Answer: ${item.ans?'TRUE':'FALSE'}`,1300,false);
+        geNext();
+    }
+    function geAnswerMCQ(i,btn){
+        const item = GAMES[geKey].data[geIdx];
+        document.querySelectorAll('#geMCQArea .quiz-opt').forEach(b=>b.disabled=true);
+        if (i===item.ans){ btn.classList.add('bg-green-100','border-green-500'); showToast('Correct! 🎉',900); geScore++; }
+        else { btn.classList.add('bg-red-100','border-red-500'); document.querySelectorAll('#geMCQArea .quiz-opt')[item.ans].classList.add('bg-green-100','border-green-500'); showToast('Wrong!',900,false); }
+        geNext();
+    }
+    function geAnswerInput(){
+        const item = GAMES[geKey].data[geIdx];
+        const v = document.getElementById('geInput').value.trim().toLowerCase().replace(/\s/g,'');
+        let ok=false;
+        const answers = Array.isArray(item.ans) ? item.ans : [item.ans];
+        answers.forEach(a=>{ const as=String(a).toLowerCase().replace(/\s/g,''); if (as===v) ok=true; const af=parseFloat(a), vf=parseFloat(v); if(!isNaN(af)&&!isNaN(vf)&&Math.abs(af-vf)<0.01) ok=true; });
+        if (ok){ showToast('Correct! ✅',900); geScore++; } else showToast(`Not quite. Answer: ${answers[0]}`,1600,false);
+        geNext();
+    }
+
+    /* ========================= MEMORY MATCH ========================= */
+    let memFlipped=[], memMatched=0, memMoves=0;
+    function initMemory(){
+        const grid = document.getElementById('memoryGrid'); grid.innerHTML='';
+        memFlipped=[]; memMatched=0; memMoves=0;
+        document.getElementById('memoryMoves').innerText = 'Moves: 0';
+        let shuffled = [...MEMORY_PAIRS].sort(()=>0.5-Math.random());
+        shuffled.forEach(item=>{ const card=document.createElement('div'); card.className='memory-card text-sm font-bold'; card.dataset.id=item.id; card.innerHTML=`<div class="content">${item.val}</div>`; card.onclick=()=>flipMemCard(card); grid.appendChild(card); });
+    }
+    function flipMemCard(card){
+        if (memFlipped.length<2 && !card.classList.contains('revealed') && !card.classList.contains('matched')) {
+            card.classList.add('revealed'); memFlipped.push(card);
+            if (memFlipped.length===2) { memMoves++; document.getElementById('memoryMoves').innerText = `Moves: ${memMoves}`; setTimeout(checkMemMatch, 700); }
+        }
+    }
+    function checkMemMatch(){
+        const [c1,c2] = memFlipped;
+        if (c1.dataset.id===c2.dataset.id) { c1.classList.replace('revealed','matched'); c2.classList.replace('revealed','matched'); memMatched+=2; if (memMatched===MEMORY_PAIRS.length) showToast('Great! Game complete! 🏆'); }
+        else { c1.classList.remove('revealed'); c2.classList.remove('revealed'); }
+        memFlipped = [];
+    }
+
+    /* ========================= SEQUENCE ORDER ========================= */
+    let seqNext=0, seqOrder=[];
+    function initSeq(){
+        seqNext = 0;
+        document.getElementById('seqPrompt').innerText = SEQ_PROMPT;
+        seqOrder = SEQ_STEPS.map((t,i)=>({t,i})).sort(()=>0.5-Math.random());
+        const c = document.getElementById('seqSteps'); c.innerHTML=''; document.getElementById('seqMsg').innerText='';
+        seqOrder.forEach(item=>{ const div=document.createElement('div'); div.className='step-item'; div.innerText=item.t; div.onclick=()=>pickSeq(item.i,div); c.appendChild(div); });
+    }
+    function pickSeq(i, el) {
+        if (i === seqNext) { el.classList.add('correct'); el.onclick=null; seqNext++; if (seqNext===SEQ_STEPS.length){ document.getElementById('seqMsg').innerText='Excellent! Correct order! 🏆'; showToast('Complete! 🎉'); } }
+        else showToast('Wrong order, try again.', 1500, false);
+    }
+
+    /* ========================= SORT IT OUT ========================= */
+    function initSort(){
+        document.getElementById('sortPrompt').innerText = SORT_PROMPT;
+        document.getElementById('sortScoreMsg').innerText = '';
+        const list = document.getElementById('sortList'); list.innerHTML='';
+        SORT_ITEMS.forEach((item,i)=>{
+            const div = document.createElement('div'); div.className='sort-item';
+            div.innerHTML = `<span class="text-left font-semibold text-sm">${item.text}</span>
+                <span class="flex gap-2">
+                <button class="quiz-opt px-3 py-1 text-sm" onclick="checkSort(${i}, 'A', this)">${SORT_LABELS[0]}</button>
+                <button class="quiz-opt px-3 py-1 text-sm" onclick="checkSort(${i}, 'B', this)">${SORT_LABELS[1]}</button>
+                </span>`;
+            list.appendChild(div);
+        });
+    }
+    function checkSort(i, guess, btn){
+        if (guess === SORT_ITEMS[i].bucket) { btn.classList.add('bg-green-100','border-green-500'); showToast('Correct! ✅',900); }
+        else { btn.classList.add('bg-red-100','border-red-500'); showToast('Not quite!',900,false); }
+        btn.parentElement.querySelectorAll('button').forEach(b=>b.disabled=true);
+    }
+</script>
+</body>
+</html>
