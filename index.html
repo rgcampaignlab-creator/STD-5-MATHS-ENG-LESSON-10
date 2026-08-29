@@ -235,39 +235,37 @@
     <div id="modelQPScreen" class="screen">
         <div class="header"><button class="back-btn" onclick="showScreen('homeScreen')">⬅</button><h1>Model Question Paper</h1></div>
         <div class="content-card">
-            <div class="text-center mb-6 border-b-2 border-gray-300 pb-2">
+            <div class="text-center mb-5 border-b-2 border-gray-300 pb-2">
                 <h2 class="text-2xl font-bold text-emerald-800">Model Question Paper - Maths</h2>
                 <p class="font-bold text-gray-500">Class 5 | Lesson 10: Rectangle Math | Time: 45 minutes</p>
             </div>
-            <div class="space-y-6 text-gray-800">
-                <div>
-                    <h3 class="font-bold text-lg mb-2 text-blue-800">1. Choose the correct answer:</h3>
-                    <ul class="list-none space-y-4 ml-2">
-                        <li>a) Area of a rectangle with length 6 cm and width 3 cm is:<br><span class="text-sm font-semibold text-gray-600">( 9 sq.cm, 18 sq.cm, 18 cm )</span></li>
-                        <li>b) Perimeter of a rectangle with sides 5 cm and 3 cm is:<br><span class="text-sm font-semibold text-gray-600">( 15 cm, 16 cm, 8 cm )</span></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg mb-2 text-blue-800">2. Fill in the blanks:</h3>
-                    <ul class="list-none space-y-3 ml-2">
-                        <li>a) The perimeter of a rectangle is twice the _____ of its sides.</li>
-                        <li>b) The area of a rectangle is the _____ of the lengths of its sides.</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg mb-2 text-blue-800">3. Answer briefly:</h3>
-                    <ul class="list-none space-y-3 ml-2">
-                        <li>a) A rectangle has area 12 sq.cm and perimeter 14 cm. Find its length and width.</li>
-                        <li>b) Explain why cutting a small rectangle off a corner of a bigger rectangle can reduce the area but keep the perimeter the same.</li>
-                    </ul>
-                </div>
-            </div>
+            <ol class="list-decimal ml-5 space-y-3 text-gray-800 text-[15px]">
+                <li>Find the area of a rectangle with length 6 cm and width 3 cm.</li>
+                <li>Find the perimeter of a rectangle with sides 5 cm and 3 cm.</li>
+                <li>Fill in the blank: The perimeter of a rectangle is twice the _____ of its sides.</li>
+                <li>Fill in the blank: The area of a rectangle is the _____ of the lengths of its sides.</li>
+                <li>A rectangle has area 12 sq.cm and perimeter 14 cm. Find its length and width.</li>
+                <li>Explain why cutting a small rectangle off a corner of a bigger rectangle can reduce the area but keep the perimeter the same.</li>
+                <li>Find the area of a rectangle: 12 cm × 5 cm.</li>
+                <li>Find the perimeter of a rectangle: 11 m and 7 m.</li>
+                <li>What is the area of a square of side 10 cm?</li>
+                <li>Two rectangles have the same perimeter of 14 cm. Give two different possible sets of sides.</li>
+            </ol>
             <button class="btn-action w-full mt-8 py-3 text-lg" onclick="document.getElementById('modelAnswers').classList.toggle('hidden')">Show Answers 👁️</button>
-            <div id="modelAnswers" class="mt-6 p-5 bg-green-50 rounded-xl hidden border-2 border-green-200 text-green-900">
+            <div id="modelAnswers" class="mt-6 p-5 bg-green-50 rounded-xl hidden border-2 border-green-200 text-green-900 text-sm">
                 <h4 class="font-bold mb-3 text-xl border-b border-green-300 pb-2">Answers:</h4>
-                <p class="font-bold mb-1">1.</p><p class="ml-4 mb-2">a) 18 sq.cm<br>b) 16 cm</p>
-                <p class="font-bold mb-1">2.</p><p class="ml-4 mb-2">a) sum<br>b) product</p>
-                <p class="font-bold mb-1">3.</p><p class="ml-4 mb-2">a) 6 cm and 2 cm (or similar pair)<br>b) Because the cut edges add back the same total length that was removed, but reduce the enclosed space.</p>
+                <ol class="list-decimal ml-5 space-y-1.5">
+                    <li>18 sq.cm</li>
+                    <li>16 cm</li>
+                    <li>sum</li>
+                    <li>product</li>
+                    <li>6 cm and 2 cm (or similar pair)</li>
+                    <li>Because the cut edges add back the same total length that was removed, but reduce the enclosed space</li>
+                    <li>60 sq.cm</li>
+                    <li>36 m</li>
+                    <li>100 sq.cm</li>
+                    <li>e.g. 6 cm × 1 cm, and 5 cm × 2 cm</li>
+                </ol>
             </div>
         </div>
     </div>
@@ -279,34 +277,27 @@
             <button class="flex-1 bg-blue-100 text-blue-700 py-3 rounded-xl font-bold border border-blue-300 shadow-sm hover:bg-blue-200 transition" onclick="window.print()">🖨️ Print</button>
             <button class="flex-1 bg-red-100 text-red-700 py-3 rounded-xl font-bold border border-red-300 shadow-sm hover:bg-red-200 transition" onclick="downloadPDF()">⬇️ Download PDF</button>
         </div>
-        <div class="content-card text-sm mx-4 bg-white" id="printableQP" style="padding: 30px;">
-            <div class="text-center mb-6 border-b-2 border-black pb-3">
-                <h2 class="text-2xl font-bold uppercase tracking-wide">Unit Test</h2>
-                <h3 class="font-bold mt-2 text-lg">Maths - Class 5 | Lesson 10: Rectangle Math</h3>
+        <div class="content-card mx-4 bg-white" id="printableQP" style="padding: 20px; font-size:12.5px; line-height:1.5;">
+            <div class="text-center mb-4 border-b-2 border-black pb-2">
+                <h2 class="text-xl font-bold uppercase tracking-wide">Unit Test</h2>
+                <h3 class="font-bold mt-1 text-base">Maths - Class 5 | Lesson 10: Rectangle Math</h3>
+                <p class="text-[11px] text-gray-600 mt-1">Time: 45 minutes | Total: 40 marks</p>
             </div>
-            <div class="space-y-6 text-base">
-                <div>
-                    <h3 class="font-bold mb-3">1. Calculate (4 marks)</h3>
-                    <p class="mb-2">a) Area of a rectangle: 12 cm × 5 cm.</p>
-                    <p>b) Perimeter of a rectangle: 11 m and 7 m.</p>
-                </div>
-                <div>
-                    <h3 class="font-bold mb-3">2. Draw (4 marks)</h3>
-                    <p>Draw a rectangle with area 8 square centimetres and perimeter 12 centimetres.</p>
-                </div>
-                <div>
-                    <h3 class="font-bold mb-3">3. Answer briefly (4 marks)</h3>
-                    <p class="mb-2">a) What is the area of a square of side 10 cm?</p>
-                    <p>b) Two rectangles have the same perimeter of 14 cm. Give two different possible sets of sides.</p>
-                </div>
-                <div>
-                    <h3 class="font-bold mb-3">4. Composite Shape (4 marks)</h3>
-                    <p class="leading-relaxed">An L-shaped figure is made by cutting a 2cm × 3cm rectangle from the corner of a 5cm × 4cm rectangle. Find the area of the remaining L-shape.</p>
-                    <div class="mt-8 border-b border-dashed border-gray-500 w-full"></div>
-                    <div class="mt-10 border-b border-dashed border-gray-500 w-full"></div>
-                </div>
-            </div>
-            <div class="mt-10 text-center font-bold text-gray-500">***</div>
+            <ol class="list-decimal ml-5 space-y-3">
+                <li>Find the area of a rectangle with sides 9 cm and 4 cm. <span class="text-gray-500">(4)</span></li>
+                <li>Find the perimeter of a rectangle with sides 8 m and 5 m. <span class="text-gray-500">(4)</span></li>
+                <li>Draw a rectangle with area 8 square centimetres and perimeter 12 centimetres. <span class="text-gray-500">(4)</span></li>
+                <li>What is the area of a square of side 7 cm? <span class="text-gray-500">(4)</span></li>
+                <li>What is the perimeter of a square of side 9 cm? <span class="text-gray-500">(4)</span></li>
+                <li>Two rectangles have the same perimeter of 20 cm. Give two different possible sets of sides. <span class="text-gray-500">(4)</span></li>
+                <li>A rectangle has area 24 sq.cm and perimeter 20 cm. Find its length and width. <span class="text-gray-500">(4)</span></li>
+                <li>Explain the difference between area and perimeter of a rectangle. <span class="text-gray-500">(4)</span></li>
+                <li>Find the area of a rectangle: 15 cm × 6 cm. <span class="text-gray-500">(4)</span></li>
+                <li>An L-shaped figure is made by cutting a 2 cm × 2 cm square from the corner of a 6 cm × 5 cm rectangle. Find the area of the remaining L-shape. <span class="text-gray-500">(4)</span>
+                    <div class="mt-4 border-b border-dashed border-gray-500 w-full"></div>
+                </li>
+            </ol>
+            <div class="mt-6 text-center font-bold text-gray-500">***</div>
         </div>
     </div>
 
